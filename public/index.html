@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 数字人交互问答</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- 引入 Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap"
+        rel="stylesheet">
+
+    <!-- 设备检测逻辑：仅允许电脑端访问 -->
+    <script>
+        function checkDevice() {
+            const userAgent = navigator.userAgent.toLowerCase();
+            const isMobileOrTablet = /android|webos|iphone|ipad|ipod|blackberry|windows phone|tablet|mobi|kindle/i.test(userAgent) || window.innerWidth <= 768;
+
+            if (isMobileOrTablet) {
+                document.documentElement.style.display = 'none'; // 先隐藏整个页面防止闪烁
+                window.onload = function () {
+                    document.body.innerHTML = `
+                        <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; background-color: #0f172a; color: #fff; font-family: 'Inter', 'Noto Sans SC', sans-serif; text-align: center; padding: 20px;">
+                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 20px;">
+                                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                                <line x1="8" y1="21" x2="16" y2="21"></line>
+                                <line x1="12" y1="17" x2="12" y2="21"></line>
+                            </svg>
+                            <h2 style="margin: 0 0 10px 0; font-size: 24px;">设备不支持</h2>
+                            <p style="color: #94a3b8; font-size: 16px; margin: 0; line-height: 1.5;">为了获得最佳的体验及稳定的语音交互功能，<br><strong>请使用电脑（PC/Mac）浏览器进入该网页。</strong></p>
+                        </div>
+                    `;
+                    document.documentElement.style.display = ''; // 恢复显示自定义提示
+                };
+            }
+        }
+        checkDevice();
+    </script>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- 顶部装饰发光层 -->
+        <div class="ambient-light"></div>
+
+        <div class="main-content">
+            <!-- 左侧：数字人模型 -->
+            <div class="avatar-section">
+                <div class="avatar-container" id="avatarContainer">
+                    <!-- 待机视频 -->
+                    <video src="kaichang.mp4" class="avatar-image" autoplay loop muted playsinline
+                        id="idleVideo"></video>
+                    <!-- 说话视频（预先加载，非循环播放）请将 src 替换为您的说话视频文件 -->
+                    <video src="shuohua.mp4" class="avatar-image" muted playsinline style="display: none;"
+                        id="speakingVideo"></video>
+                    <div class="pulse-ring"></div>
+                </div>
+                <!-- 解析逐字显示区 (通常会放在下方或者数字人这侧) -->
+                <div class="subtitles-section" id="subtitlesSection">
+                    <div class="subtitles-box glass-panel">
+                        <div class="subtitle-content" id="subtitleText">
+                            点击右侧题目，我会为你解答...
+                        </div>
+                        <div class="typing-indicator" id="typingIndicator">
+                            <span></span><span></span><span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右侧：题目列表 -->
+            <div class="questions-section glass-panel">
+                <div class="questions-header">
+                    <h2>📚 每日知识问答</h2>
+                    <div style="display: flex; gap: 10px;">
+                        <button id="micBtn" class="refresh-btn"
+                            style="background: rgba(239, 68, 68, 0.2); color: #fca5a5; border-color: rgba(239, 68, 68, 0.3);">
+                            <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2"
+                                fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                                <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                                <line x1="12" y1="19" x2="12" y2="23"></line>
+                                <line x1="8" y1="23" x2="16" y2="23"></line>
+                            </svg>
+                            <span id="micText">按住提问</span>
+                        </button>
+                        <button id="refreshBtn" class="refresh-btn">
+                            <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2"
+                                fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="23 4 23 10 17 10"></polyline>
+                                <polyline points="1 20 1 14 7 14"></polyline>
+                                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                            </svg>
+                            换一批
+                        </button>
+                    </div>
+                </div>
+                <div class="questions-list" id="questionsList">
+                    <!-- 题目将通过 JS 动态插入 -->
+                    <div class="loading-questions">加载题目中...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 隐藏的音频播放器 -->
+    <audio id="audioPlayer" style="display: none;"></audio>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,298 @@
+:root {
+    --bg-color: #0d0f1a;
+    --panel-bg: rgba(255, 255, 255, 0.03);
+    --panel-border: rgba(255, 255, 255, 0.08);
+    --text-primary: #f0f2f5;
+    --text-secondary: #a0a8b9;
+    --accent-color: #6366f1;
+    --accent-hover: #4f46e5;
+    --glow-color: rgba(99, 102, 241, 0.5);
+    --success-glow: rgba(34, 197, 94, 0.5);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', 'Noto Sans SC', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+}
+
+/* 环境光晕特效 */
+.ambient-light {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80vw;
+    height: 80vh;
+    background: radial-gradient(circle, var(--glow-color) 0%, transparent 60%);
+    opacity: 0.15;
+    z-index: 0;
+    pointer-events: none;
+    filter: blur(100px);
+}
+
+.app-container {
+    width: 100%;
+    max-width: 1400px;
+    height: 90vh;
+    margin: 0 auto;
+    padding: 2rem;
+    position: relative;
+    z-index: 1;
+}
+
+.main-content {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 2rem;
+    height: 100%;
+}
+
+/* 玻璃拟物态通用类 */
+.glass-panel {
+    background: var(--panel-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--panel-border);
+    border-radius: 24px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+}
+
+/* 左侧数字人区域 */
+.avatar-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 2rem;
+}
+
+.avatar-container {
+    flex-grow: 1;
+    border-radius: 24px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01));
+    border: 1px solid var(--panel-border);
+}
+
+.avatar-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: saturate(1.2) contrast(1.1);
+    transition: transform 0.5s ease;
+}
+
+/* 播放时的脉冲动画 */
+.avatar-container.speaking .pulse-ring {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    box-shadow: inset 0 0 50px var(--glow-color);
+    animation: pulsate 2s infinite ease-in-out;
+    pointer-events: none;
+}
+
+@keyframes pulsate {
+    0% { opacity: 0.5; box-shadow: inset 0 0 20px var(--glow-color); }
+    50% { opacity: 1; box-shadow: inset 0 0 80px var(--glow-color); }
+    100% { opacity: 0.5; box-shadow: inset 0 0 20px var(--glow-color); }
+}
+
+/* 字幕区 */
+.subtitles-section {
+    height: auto;
+    min-height: 150px;
+}
+
+.subtitles-box {
+    padding: 1.5rem 2rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+}
+
+.subtitle-content {
+    font-size: 1.15rem;
+    line-height: 1.6;
+    letter-spacing: 0.5px;
+    font-weight: 500;
+    color: #e2e8f0;
+}
+
+.typing-indicator {
+    display: none;
+    margin-top: 1rem;
+}
+
+.typing-indicator span {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background-color: var(--accent-color);
+    border-radius: 50%;
+    margin-right: 5px;
+    animation: bounce 1.4s infinite ease-in-out both;
+}
+
+.typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+.typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes bounce {
+    0%, 80%, 100% { transform: scale(0); }
+    40% { transform: scale(1); }
+}
+
+/* 右侧题目区 */
+.questions-section {
+    display: flex;
+    flex-direction: column;
+    padding: 2rem;
+    overflow: hidden;
+}
+
+.questions-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.questions-header h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.refresh-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--panel-border);
+    color: var(--text-primary);
+    padding: 8px 16px;
+    border-radius: 50px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.refresh-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.questions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+/* 自定义滚动条 */
+.questions-list::-webkit-scrollbar {
+    width: 6px;
+}
+.questions-list::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 10px;
+}
+.questions-list::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+.questions-list::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.question-item {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--panel-border);
+    padding: 1.25rem 1.5rem;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    font-size: 1.05rem;
+    line-height: 1.5;
+    position: relative;
+    overflow: hidden;
+}
+
+.question-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--accent-color);
+    transform: scaleY(0);
+    transition: transform 0.3s ease;
+    transform-origin: bottom;
+}
+
+.question-item:hover {
+    background: rgba(255, 255, 255, 0.06);
+    transform: translateX(5px);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.question-item:hover::before {
+    transform: scaleY(1);
+}
+
+.question-item.active {
+    background: rgba(99, 102, 241, 0.1);
+    border-color: rgba(99, 102, 241, 0.3);
+}
+
+.question-item.active::before {
+    transform: scaleY(1);
+}
+
+.loading-questions {
+    text-align: center;
+    color: var(--text-secondary);
+    padding: 2rem;
+    font-style: italic;
+}
+
+/* 响应式设计 */
+@media (max-width: 900px) {
+    .main-content {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
+    }
+    .app-container {
+        height: auto;
+        min-height: 100vh;
+        padding: 1rem;
+    }
+    .avatar-section {
+        height: 60vh;
+    }
+}
