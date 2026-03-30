@@ -1,5 +1,6 @@
 :root {
-    --bg-color: #0d0f1a;
+    --bg-color: #0f172a;
+    --bg-gradient: linear-gradient(135deg, #0f172a 0%, #020617 100%);
     --panel-bg: rgba(255, 255, 255, 0.03);
     --panel-border: rgba(255, 255, 255, 0.08);
     --text-primary: #f0f2f5;
@@ -18,13 +19,14 @@
 
 body {
     font-family: 'Inter', 'Noto Sans SC', sans-serif;
-    background-color: var(--bg-color);
+    background: var(--bg-gradient);
     color: var(--text-primary);
     min-height: 100vh;
     display: flex;
-    justify-content: center;
+    justify-content: flex-start; /* 改为靠左对齐 */
     align-items: center;
-    overflow: hidden;
+    overflow-x: auto; /* 宽屏允许水平滚动以防万一 */
+    overflow-y: hidden;
     position: relative;
 }
 
@@ -44,11 +46,12 @@ body {
 }
 
 .app-container {
-    width: 100%;
-    max-width: 1400px;
-    height: 90vh;
-    margin: 0 auto;
-    padding: 2rem;
+    width: 60%; /* 在超宽屏下占据一定比例，而不是全屏拉伸 */
+    max-width: 1600px;
+    height: 85vh;
+    margin-left: 5%; /* 往左移一点，不靠死边 */
+    margin-right: auto;
+    padding: 1.5rem;
     position: relative;
     z-index: 1;
 }
@@ -306,9 +309,10 @@ body {
 /* 底部备案号样式 */
 .footer {
     position: absolute;
-    bottom: 20px;
-    width: 100%;
-    text-align: center;
+    bottom: 10px;
+    left: 2rem;
+    width: auto;
+    text-align: left;
     z-index: 10;
     pointer-events: auto;
 }
