@@ -303,6 +303,28 @@ body {
     100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
 }
 
+/* 底部备案号样式 */
+.footer {
+    position: absolute;
+    bottom: 20px;
+    width: 100%;
+    text-align: center;
+    z-index: 10;
+    pointer-events: auto;
+}
+
+.footer a {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    text-decoration: none;
+    transition: color 0.2s;
+    font-weight: 400;
+}
+
+.footer a:hover {
+    color: var(--text-primary);
+}
+
 /* 响应式设计 */
 @media (max-width: 900px) {
     .main-content {
