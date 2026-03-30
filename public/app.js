@@ -15,6 +15,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let mediaRecorder = null;
     let audioChunks = [];
     let isRecording = false;
+    let isFetching = false;
+    let recordingTimer = null;
 
     // 拉取题目列表
     async function fetchQuestions() {
@@ -40,14 +42,33 @@ document.addEventListener('DOMContentLoaded', () => {
         questions.forEach((q, index) => {
             const div = document.createElement('div');
             div.className = 'question-item';
+            if (isFetching || isRecording) div.classList.add('disabled');
             div.textContent = `${index + 1}. ${q}`;
-            div.addEventListener('click', () => handleQuestionClick(div, q));
+            div.addEventListener('click', () => {
+                if (!div.classList.contains('disabled')) {
+                    handleQuestionClick(div, q);
+                }
+            });
             questionsList.appendChild(div);
+        });
+    }
+
+    function setUIState(loading) {
+        isFetching = loading;
+        const items = document.querySelectorAll('.question-item, .refresh-btn, #micBtn');
+        items.forEach(el => {
+            if (loading) {
+                el.classList.add('disabled');
+            } else {
+                el.classList.remove('disabled');
+            }
         });
     }
 
     // 处理题目点击
     async function handleQuestionClick(element, questionStr) {
+        if (isFetching) return;
+
         if (isPlaying) {
             // 打断当前说话
             audioPlayer.pause();
@@ -64,6 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
         element.classList.add('active');
 
         // UI 进入加载解析状态
+        setUIState(true);
         subtitleText.style.display = 'none';
         typingIndicator.style.display = 'block';
         subtitleText.textContent = '';
@@ -86,6 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // 获取到音频和文本后
             playAudioAndSubtitles(data.audioBase64, data.answer);
+            setUIState(false);
 
         } catch (error) {
             if (error.name === 'AbortError') {
@@ -97,6 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
             subtitleText.style.display = 'block';
             subtitleText.textContent = `[错误]: ${error.message}`;
             isPlaying = false;
+            setUIState(false);
             element.classList.remove('active');
         }
     }
@@ -217,8 +241,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 const audioBlob = new Blob(audioChunks);
                 audioChunks = []; // reset
                 micText.textContent = "处理中...";
+                setUIState(true); // 此时开始处理，禁用点击
 
                 await sendAudioToASR(audioBlob);
+                setUIState(false);
             };
         } catch (err) {
             console.error("获取麦克风权限失败: ", err);
@@ -258,7 +284,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const recognizedText = data.text;
-            micText.textContent = "按住提问";
+            micText.textContent = "点击提问";
 
             if (!recognizedText || recognizedText.trim() === '') {
                 typingIndicator.style.display = 'none';
@@ -292,14 +318,13 @@ document.addEventListener('DOMContentLoaded', () => {
             typingIndicator.style.display = 'none';
             subtitleText.style.display = 'block';
             subtitleText.textContent = `[语音识别/回答错误]: ${error.message}`;
-            micText.textContent = "按住提问";
+            micText.textContent = "点击提问";
             isPlaying = false;
         }
     }
 
     if (micBtn) {
-        // 桌面端鼠标事件
-        micBtn.addEventListener('mousedown', async () => {
+        const startRecording = async () => {
             if (!mediaRecorder) {
                 await initAudioRecording();
                 if (!mediaRecorder) return;
@@ -309,20 +334,41 @@ document.addEventListener('DOMContentLoaded', () => {
                 mediaRecorder.start();
                 isRecording = true;
                 micBtn.classList.add('recording');
-                micText.textContent = "松开发送";
+                micText.textContent = "停止发送";
+                setUIState(true);
+                micBtn.classList.remove('disabled'); // 录音按钮本身不能在录音时被 disabled 样式覆盖（逻辑上也不应该）
+
+                // 20秒自动停止
+                clearTimeout(recordingTimer);
+                recordingTimer = setTimeout(() => {
+                    if (isRecording) {
+                        console.log("录音超过20秒，自动停止");
+                        stopRecording();
+                    }
+                }, 20000);
             }
-        });
+        };
 
         const stopRecording = () => {
             if (isRecording && mediaRecorder && mediaRecorder.state === 'recording') {
                 mediaRecorder.stop();
                 isRecording = false;
                 micBtn.classList.remove('recording');
+                micText.textContent = "点击提问";
+                clearTimeout(recordingTimer);
+                // setUIState(false) 会在 mediaRecorder.onstop 中异步处理完 ASR 后调用
             }
         };
 
-        micBtn.addEventListener('mouseup', stopRecording);
-        micBtn.addEventListener('mouseleave', stopRecording);
+        micBtn.addEventListener('click', () => {
+            if (isFetching && !isRecording) return; // 正在获取 AI 回答时不允许录音，除非是正在录音要停止
+
+            if (!isRecording) {
+                startRecording();
+            } else {
+                stopRecording();
+            }
+        });
     }
 
     // 初始化加载

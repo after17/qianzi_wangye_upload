@@ -281,6 +281,28 @@ body {
     font-style: italic;
 }
 
+/* 禁用状态 */
+.question-item.disabled, .refresh-btn.disabled, #micBtn.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+    filter: grayscale(0.5);
+}
+
+/* 录音状态下的呼吸灯特效 */
+#micBtn.recording {
+    background: rgba(239, 68, 68, 0.4) !important;
+    border-color: rgba(239, 68, 68, 0.6) !important;
+    color: #fff !important;
+    animation: mic-pulse 1.5s infinite;
+}
+
+@keyframes mic-pulse {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+    70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
 /* 响应式设计 */
 @media (max-width: 900px) {
     .main-content {
