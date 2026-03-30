@@ -1,6 +1,6 @@
 :root {
     --bg-color: #0f172a;
-    --bg-gradient: linear-gradient(135deg, #0f172a 0%, #020617 100%);
+    --bg-gradient: url('千字文背景.jpg') no-repeat center right / cover;
     --panel-bg: rgba(255, 255, 255, 0.03);
     --panel-border: rgba(255, 255, 255, 0.08);
     --text-primary: #f0f2f5;
