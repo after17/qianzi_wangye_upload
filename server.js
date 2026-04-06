@@ -161,7 +161,7 @@ app.post('/api/answer', async (req, res) => {
         const qwenRes = await axios.post(
             'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions',
             {
-                model: 'qwen-max-0919', // 或 qwen-max, qwen-turbo
+                model: 'qwen3.5-27b', // 修改为 qwen3.5-27b
                 messages: [
                     { role: 'system', content: '你是一个智能数字人助手。请直接回答用户的问题，回答要口语化、简明扼要，适合通过语音播报即可。不要使用复杂的Markdown排版格式。在50个字以内' },
                     { role: 'user', content: question }
