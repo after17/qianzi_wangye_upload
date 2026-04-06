@@ -188,7 +188,13 @@ app.post('/api/answer', async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Error processing answer:', error.response?.data || error.message);
+        // --- 核心调试日志：打印阿里云返回的详细错误体 (Json 格式) ---
+        if (error.response && error.response.data) {
+            console.error('【阿里 API 详情】:', JSON.stringify(error.response.data, null, 2));
+        } else {
+            console.error('Error processing answer (Full Error):', error);
+        }
+
         res.status(500).json({ error: 'Failed to process the question. ' + error.message });
     }
 });
