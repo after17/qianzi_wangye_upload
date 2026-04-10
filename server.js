@@ -163,7 +163,7 @@ app.post('/api/answer', async (req, res) => {
             {
                 model: 'qwen3.5-flash', // 修改为 qwen3.5-flash
                 messages: [
-                    { role: 'system', content: '你是一个智能数字人助手。请直接回答用户的问题，回答要口语化、简明扼要，适合通过语音播报即可。不要使用复杂的Markdown排版格式。在50个字以内' },
+                    { role: 'system', content: '你是一个智能数字人助手。请直接回答用户的问题，回答要口语化、简明扼要，适合通过语音播报即可。不要使用复杂的Markdown排版格式。在300个字以内 复杂的问题就回答长一点，简单的问题的回答短一点' },
                     { role: 'user', content: question }
                 ]
             },
