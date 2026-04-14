@@ -23,9 +23,10 @@ body {
     color: var(--text-primary);
     min-height: 100vh;
     display: flex;
-    justify-content: flex-start; /* 改为靠左对齐 */
-    align-items: center;
-    overflow-x: auto; /* 宽屏允许水平滚动以防万一 */
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start; /* 严格靠左对齐 */
+    overflow-x: auto;
     overflow-y: hidden;
     position: relative;
 }
@@ -46,10 +47,10 @@ body {
 }
 
 .app-container {
-    width: 60%; /* 在超宽屏下占据一定比例，而不是全屏拉伸 */
-    max-width: 1600px;
-    height: 85vh;
-    margin-left: 5%; /* 往左移一点，不靠死边 */
+    width: 2500px; /* 合理调整整体宽度，让每个模块空间足够且右侧留空 */
+    max-width: 95vw;
+    height: 680px; /* 锁死高度，确保在 800px 屏幕内下绝对不会溢出 */
+    margin-left: 4%; /* 偏左对齐 */
     margin-right: auto;
     padding: 1.5rem;
     position: relative;
@@ -58,9 +59,10 @@ body {
 
 .main-content {
     display: grid;
-    grid-template-columns: 1.2fr 1fr;
+    grid-template-columns: 800px 1fr 1fr; /* 将视频宽度硬锁定在800px左右，保护其原始比例，防止过宽 */
     gap: 2rem;
     height: 100%;
+    min-height: 0; /* 关键：防止网格容器撑爆外层 */
 }
 
 /* 玻璃拟物态通用类 */
@@ -78,7 +80,9 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    gap: 2rem;
+    gap: 1.25rem;
+    min-height: 0; /* 防止内容撑爆高度 */
+    height: 100%;
 }
 
 .avatar-container {
@@ -91,6 +95,7 @@ body {
     align-items: center;
     background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01));
     border: 1px solid var(--panel-border);
+    min-height: 0; /* 允许视频区域纵向自我压缩，不会将字幕挤压出界限 */
 }
 
 .avatar-image {
@@ -119,9 +124,8 @@ body {
 
 /* 字幕区 */
 .subtitles-section {
-    height: auto;
-    min-height: 180px;
-    margin-bottom: 40px; /* 往上提，防止物理屏幕底端遮挡 */
+    height: 140px; /* 锁死字幕框高度，确保它永远不会消失 */
+    flex-shrink: 0; /* 禁止弹性变小 */
 }
 
 .subtitles-box {
@@ -170,6 +174,7 @@ body {
     flex-direction: column;
     padding: 2rem;
     overflow: hidden;
+    min-height: 0; /* 确保弹性子级可以滚动处理溢出，不撑爆外壳 */
 }
 
 .questions-header {
@@ -215,6 +220,8 @@ body {
     gap: 1rem;
     overflow-y: auto;
     padding-right: 10px;
+    flex-grow: 1; /* 撑满剩余垂直空间 */
+    min-height: 0; /* 允许出现内部滚动条 */
 }
 
 /* 自定义滚动条 */
@@ -311,16 +318,17 @@ body {
 
 /* 底部备案号样式 */
 .footer {
-    position: absolute;
-    bottom: 15px;
-    left: 2rem;
+    position: relative;
+    margin-top: 15px;
+    margin-left: 4%; /* 与主容器对齐 */
     width: auto;
-    text-align: left;
+    text-align: left; /* 靠左对齐 */
     z-index: 10;
     pointer-events: auto;
     display: flex;
+    justify-content: flex-start;
     align-items: center;
-    gap: 20px; /* 两个备案之间的间距 */
+    gap: 30px;
 }
 
 .footer a {
@@ -342,6 +350,54 @@ body {
 
 .footer a:hover {
     color: var(--text-primary);
+}
+
+/* 太平山水图介绍板块样式 */
+.intro-section {
+    display: flex;
+    flex-direction: column;
+    padding: 2rem;
+    overflow: hidden;
+    min-height: 0; /* 确保弹性子级可以滚动处理溢出，不撑爆外壳 */
+}
+
+.intro-header h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #000000;
+    margin-bottom: 2rem;
+}
+
+.intro-content {
+    overflow-y: auto;
+    padding-right: 15px;
+    font-size: 1.2rem;
+    line-height: 1.8;
+    color: #1a1a1a;
+    flex-grow: 1; /* 撑满剩余垂直空间 */
+    min-height: 0; /* 允许出现内部滚动条 */
+}
+
+.intro-content p {
+    margin-bottom: 1.5rem;
+    text-indent: 2em; /* 首行缩进 */
+}
+
+.intro-content p:first-child {
+    text-indent: 0; /* 第一段人物介绍不缩进 */
+}
+
+/* 自定义介绍区滚动条 */
+.intro-content::-webkit-scrollbar {
+    width: 6px;
+}
+.intro-content::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 10px;
+}
+.intro-content::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
 }
 
 /* 响应式设计 */
