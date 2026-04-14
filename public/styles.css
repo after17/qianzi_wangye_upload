@@ -312,12 +312,15 @@ body {
 /* 底部备案号样式 */
 .footer {
     position: absolute;
-    bottom: 10px;
+    bottom: 15px;
     left: 2rem;
     width: auto;
     text-align: left;
     z-index: 10;
     pointer-events: auto;
+    display: flex;
+    align-items: center;
+    gap: 20px; /* 两个备案之间的间距 */
 }
 
 .footer a {
@@ -326,6 +329,15 @@ body {
     text-decoration: none;
     transition: color 0.2s;
     font-weight: 400;
+    display: flex;
+    align-items: center;
+}
+
+.footer .psb-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 6px;
+    vertical-align: middle;
 }
 
 .footer a:hover {

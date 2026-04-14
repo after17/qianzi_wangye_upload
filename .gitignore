@@ -1,5 +1,22 @@
+# 依赖与环境
+node_modules/
+.env
+.env.local
+
+# 临时生成文件
+temp_audio_*.mp3
+temp_audio_*.wav
+uploads/*
+!uploads/.gitkeep
+
+# 原始文档配置
 /智能数字人项目_详细设计文档.md
 /用户使用文档.md
 /部署文档.md
 /需求确认.md
 /项目当前进度与难点说明.md
+
+# 编辑器配置
+.idea/
+.vscode/
+*.swp
